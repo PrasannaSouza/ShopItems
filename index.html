@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Shop</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
+        .card img { max-width: 100%; height: 150px; object-fit: cover; border-radius: 4px; }
+        .price { color: #2ecc71; font-weight: bold; font-size: 1.2em; }
+        .btn-call { background: #3498db; color: white; border: none; padding: 10px; width: 100%; border-radius: 5px; cursor: pointer; text-decoration: none; display: inline-block; }
+    </style>
+</head>
+<body>
+    <h1>Welcome to My Store</h1>
+    <div id="items" class="grid">Loading items...</div>
+
+    <script>
+        // REPLACE THIS WITH YOUR PUBLISHED CSV URL FROM STEP 1
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSefSQgU3yfNypNRFk7Lwdp0OY7FESQBdj5j25nLeCJthG7YKikLbo8kf63ZVF2wCyfBdl42A4cyNsO/pub?gid=0&single=true&output=csv';
+
+        async function fetchStore() {
+            try {
+                const response = await fetch(CSV_URL);
+                const data = await response.text();
+                const rows = data.split('\n').slice(1);
+                let container = document.getElementById('items');
+                container.innerHTML = '';
+
+                rows.forEach(row => {
+                    const columns = row.split(',');
+                    if (columns.length < 5) return;
+                    const [id, name, price, count, img] = columns;
+
+                    container.innerHTML += `
+                        <div class="card">
+                            <img src="${img.trim()}" alt="${name}">
+                            <h3>${name}</h3>
+                            <p class="price">₹${price}</p>
+                            <p>In Stock: ${count}</p>
+                            <a href="tel:+919876543210" class="btn-call">Call to Order</a>
+                        </div>`;
+                });
+            } catch (e) {
+                document.getElementById('items').innerText = "Error loading items.";
+            }
+        }
+        fetchStore();
+    </script>
+</body>
+</html>
